@@ -286,16 +286,6 @@ summary::-webkit-details-marker {
   animation: drift 9s ease-in-out infinite alternate;
 }
 
-/* Circular stamp that turns slowly, like a record label */
-@keyframes spin {
-  to {
-    transform: rotate(360deg);
-  }
-}
-.spin-slow {
-  animation: spin 28s linear infinite;
-}
-
 /* Endless ticker: content is duplicated once, so -50% lands exactly on the copy */
 @keyframes marquee {
   to {
@@ -325,7 +315,6 @@ summary::-webkit-details-marker {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .spin-slow,
   .marquee {
     animation: none;
   }

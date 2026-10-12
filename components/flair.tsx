@@ -1,28 +1,3 @@
-import { useId } from "react";
-import { HaloMark } from "@/components/icons";
-
-/** A circular stamp with text running around the Halo mark, turning slowly. */
-export function Stamp({ text, size = 132, className = "" }: { text: string; size?: number; className?: string }) {
-  const id = useId();
-  return (
-    <div className={`relative ${className}`} style={{ width: size, height: size }} aria-hidden>
-      <svg viewBox="0 0 100 100" className="spin-slow absolute inset-0 h-full w-full">
-        <defs>
-          <path id={id} d="M50,50 m-38,0 a38,38 0 1,1 76,0 a38,38 0 1,1 -76,0" />
-        </defs>
-        <text className="fill-current font-mono text-[8.2px] uppercase tracking-[0.22em]">
-          <textPath href={`#${id}`}>{text}</textPath>
-        </text>
-      </svg>
-      <span className="absolute inset-0 flex items-center justify-center">
-        <span className="flex h-[38%] w-[38%] items-center justify-center rounded-full bg-ink">
-          <HaloMark size={Math.round(size * 0.18)} />
-        </span>
-      </span>
-    </div>
-  );
-}
-
 /** A handwritten-feeling note: serif italic with a drawn arrow. `dir` sets where the arrow points. */
 export function Note({
   children,

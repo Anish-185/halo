@@ -5,7 +5,7 @@ import { motion, useScroll, useTransform } from "motion/react";
 import { BgVideo } from "@/components/bg-video";
 import { calm, Words } from "@/components/motion";
 import { Icon, Pill } from "@/components/icons";
-import { Note, Stamp } from "@/components/flair";
+import { Note } from "@/components/flair";
 import { Answer, Asked, CallWindow, HaloPanel, HiddenBadge, Tiles, useStream } from "@/components/halo-ui";
 
 const q = "Walk me through a project you're proud of.";
@@ -103,18 +103,7 @@ export function Hero() {
           </HaloPanel>
         </motion.div>
 
-        {/* Flair: a turning stamp on the call window, and a margin note pointing at Halo */}
-        <motion.div
-          initial={{ opacity: 0, scale: 0.8, rotate: -20 }}
-          animate={{ opacity: 1, scale: 1, rotate: 0 }}
-          transition={{ duration: 1.4, ease: calm, delay: 2.4 }}
-          className="absolute -left-2 -top-16 z-20 hidden md:block"
-        >
-          <Stamp
-            text="Invisible on screen share · No bot joins · "
-            className="rounded-full bg-white/90 text-ink shadow-[0_20px_40px_-20px_rgb(0_0_0/0.4)] backdrop-blur-xl"
-          />
-        </motion.div>
+        {/* A margin note pointing at Halo */}
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
