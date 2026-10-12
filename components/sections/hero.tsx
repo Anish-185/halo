@@ -32,35 +32,36 @@ export function Hero() {
 
   return (
     <section id="top" ref={ref} className="px-3 pt-3 sm:px-4 sm:pt-4">
-      <div className="frame grain pb-[220px] text-white sm:pb-[340px]">
+      <div className="frame grain pb-[220px] text-ink sm:pb-[340px]">
         <motion.div style={{ y: bgY }} className="absolute inset-x-0 -top-[4%] -bottom-[16%] -z-10">
-          <BgVideo name="dawn" priority />
-          <div className="absolute inset-0 bg-[linear-gradient(180deg,rgb(8_12_16/0.55),rgb(8_12_16/0.12)_45%,rgb(8_12_16/0.3))]" />
+          <BgVideo name="mist" priority />
+          {/* Morning-mist veil: keeps ink type crisp over the bright sky, lets the ridges show below */}
+          <div className="absolute inset-0 bg-[linear-gradient(180deg,rgb(244_245_243/0.82),rgb(244_245_243/0.55)_38%,rgb(244_245_243/0.1)_62%,rgb(10_20_14/0.18))]" />
         </motion.div>
 
         <div className="relative z-[1] mx-auto grid max-w-[1240px] gap-10 px-5 pt-36 sm:px-10 sm:pt-48 lg:grid-cols-[1.6fr_1fr] lg:items-end lg:gap-16">
           <div>
-            <motion.p {...rise(0.2)} className="meta flex items-center gap-2 text-white/75">
+            <motion.p {...rise(0.2)} className="meta flex items-center gap-2 text-ink/60">
               <span className="live-dot h-1.5 w-1.5 rounded-full bg-flame" />
               Real-time answers for live calls
             </motion.p>
             <h1 aria-label="Answers before they finish asking." className="display mt-6">
               <Words as="span" onView={false} delay={0.25} text="Answers before" />
               <br />
-              <Words as="span" onView={false} delay={0.45} className="accent text-white/75" text="they finish asking." />
+              <Words as="span" onView={false} delay={0.45} className="accent text-ink/55" text="they finish asking." />
             </h1>
           </div>
           <motion.div {...rise(0.7)} className="lg:pb-3">
-            <p className="lede max-w-[28rem] text-white/80">
+            <p className="lede max-w-[28rem] text-ink/75">
               Halo transcribes your call, detects each question, and writes the answer in an overlay only you can see.
               Nothing joins the meeting. Nothing shows on screen share.
             </p>
             <div className="mt-8 flex flex-wrap gap-2">
-              <Pill href="#download" arrow>
+              <Pill href="#download" arrow tone="dark">
                 <Icon.apple />
                 Download for Mac
               </Pill>
-              <Pill href="#demo" tone="ghost">
+              <Pill href="#demo">
                 Watch a live call
               </Pill>
             </div>

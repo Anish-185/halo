@@ -9,7 +9,7 @@ import { useReducedMotion } from "motion/react";
  * the video only loads near the viewport, pauses off-screen, and is skipped
  * entirely when the OS asks for reduced motion.
  */
-export function BgVideo({ name, priority = false }: { name: "dawn" | "dusk"; priority?: boolean }) {
+export function BgVideo({ name, priority = false }: { name: "mist" | "dusk"; priority?: boolean }) {
   const ref = useRef<HTMLDivElement>(null);
   const video = useRef<HTMLVideoElement>(null);
   const reduce = useReducedMotion();
