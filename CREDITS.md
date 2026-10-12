@@ -23,8 +23,8 @@ Masters are 3200 px wide; `next/image` serves them as AVIF/WebP at the right siz
 | File | Scene | Source |
 | --- | --- | --- |
 | `public/media/meadow.jpg` | Golden meadow at sunrise (live demo) | https://images.unsplash.com/photo-1434725039720-aaad6dd32dfe |
-| `public/media/lonetree.jpg` | Lone tree in morning mist (customers) | https://images.unsplash.com/photo-1528183429752-a97d0bf99b5a |
-| `public/media/field.jpg` | Green field at golden hour (footer) | https://images.unsplash.com/photo-1495107334309-fcf20504a5ab |
+| `public/media/blossom.jpg` | Cherry blossom against a pale sky (customers) | https://images.unsplash.com/photo-1522383225653-ed111181a951 |
+| `public/media/hills.jpg` | Rolling green hills (footer, 2600 px master) | https://images.unsplash.com/photo-1501854140801-50d01698950b |
 
 The Unsplash License doesn't require attribution. Each photo's page, with the photographer's name, can be found by opening the URL above on unsplash.com.
 

@@ -80,7 +80,7 @@ export function Intro({
 }) {
   const soft = light ? "text-white/65" : "text-ink/45";
   return (
-    <div className={center ? "mx-auto max-w-[46rem] text-center" : "grid gap-6 md:grid-cols-[1.25fr_1fr] md:gap-16"}>
+    <div className={center ? "mx-auto max-w-[46rem] text-center" : body ? "grid gap-6 md:grid-cols-[1.25fr_1fr] md:gap-16" : ""}>
       <div>
         {label && <p className={`meta ${light ? "text-white/70" : "text-muted"}`}>{label}</p>}
         <h2 aria-label={accent ? `${title} ${accent}` : title} className={`headline mt-4 ${light ? "text-white" : ""}`}>

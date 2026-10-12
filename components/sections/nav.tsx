@@ -4,6 +4,7 @@ import { Clock } from "@/components/clock";
 const links = [
   ["How it works", "#how"],
   ["Features", "#features"],
+  ["Try it", "#try"],
   ["Pricing", "#pricing"],
 ];
 

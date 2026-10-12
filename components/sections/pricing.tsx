@@ -64,7 +64,7 @@ function Tier({ t }: { t: (typeof tiers)[number] }) {
     <div className={`relative z-[1] flex h-full flex-col rounded-[22px] p-6 sm:rounded-[30px] sm:p-8 ${dark ? "device edge-light" : ""}`}>
       <div className="flex items-center justify-between">
         <h3 className="title">{t.name}</h3>
-        {dark && <span className="meta rounded-full bg-ember/15 px-2.5 py-1 text-[10.5px] text-ember">Most chosen</span>}
+        {dark && <span className="meta -rotate-6 rounded-full bg-flame px-3 py-1.5 text-[10.5px] text-white shadow-[0_8px_20px_-8px_rgb(255_122_46/0.8)]">Most chosen</span>}
       </div>
       <p className={`mt-2 text-[15px] ${dark ? "text-white/60" : "text-muted"}`}>{t.blurb}</p>
       <p className="mt-10 flex items-baseline gap-3">

@@ -43,8 +43,8 @@ export function FinalCta() {
       </section>
 
       <footer className="relative isolate mt-24 overflow-hidden text-white sm:mt-32">
-        <Image src="/media/field.jpg" alt="" fill sizes="100vw" quality={80} className="-z-10 object-cover object-[center_85%]" />
-        <div className="absolute inset-0 -z-10 bg-[linear-gradient(180deg,rgb(10_14_6/0.62),rgb(10_14_6/0.45)_55%,rgb(10_14_6/0.3))]" />
+        <Image src="/media/hills.jpg" alt="" fill sizes="100vw" quality={80} className="-z-10 object-cover object-[center_60%]" />
+        <div className="absolute inset-0 -z-10 bg-[linear-gradient(180deg,rgb(8_20_10/0.62),rgb(8_20_10/0.35)_50%,rgb(8_20_10/0.15))]" />
         <svg aria-hidden viewBox="0 0 1440 80" preserveAspectRatio="none" className="absolute inset-x-0 top-0 h-[60px] w-full drop-shadow-[0_6px_8px_rgb(0_0_0/0.18)] sm:h-[80px]">
           <path d={tear} fill="var(--color-stone)" />
         </svg>

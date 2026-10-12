@@ -286,7 +286,53 @@ summary::-webkit-details-marker {
   animation: drift 9s ease-in-out infinite alternate;
 }
 
+/* Circular stamp that turns slowly, like a record label */
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+.spin-slow {
+  animation: spin 28s linear infinite;
+}
+
+/* Endless ticker: content is duplicated once, so -50% lands exactly on the copy */
+@keyframes marquee {
+  to {
+    transform: translateX(-50%);
+  }
+}
+.marquee {
+  animation: marquee 60s linear infinite;
+}
+.marquee:hover {
+  animation-play-state: paused;
+}
+
+/* Hand-drawn annotation stroke that draws itself in */
+@keyframes draw {
+  from {
+    stroke-dashoffset: 1;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+.draw {
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+  animation: draw 1.6s var(--ease-calm) forwards;
+}
+
 @media (prefers-reduced-motion: reduce) {
+  .spin-slow,
+  .marquee {
+    animation: none;
+  }
+  .draw {
+    animation: none;
+    stroke-dashoffset: 0;
+  }
   .caret,
   .live-dot,
   .glyph {
