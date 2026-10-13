@@ -21,7 +21,9 @@ export default function Home() {
         <Ticker />
         <Statement />
         <HowItWorks />
-        <LiveDemo />
+        <LiveDemo variant="wave" />
+        <LiveDemo variant="words" id="demo-words" />
+        <LiveDemo variant="night" id="demo-night" />
         <Features />
         <Playground />
         <UseCases />

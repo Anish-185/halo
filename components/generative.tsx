@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 
 /*
  * Generative backgrounds drawn from sound and light: voice ridgelines, a listening dot field,
@@ -206,6 +206,113 @@ export function Horizon({ rows = 22, horizonAt = 0.6, sunX = 0.6 }) {
       const hot = Math.abs(y0 - py) < (h - horizon) / rows && px > 0 && px < w;
       c.strokeStyle = hot ? "#f6f5f1" : `rgb(255 122 46 / ${0.3 + d * 0.6})`;
       c.lineWidth = hot ? 1.5 : 1;
+      c.stroke();
+    }
+  });
+  return <canvas ref={ref} aria-hidden className={fill} />;
+}
+
+/**
+ * The call's audio as a live oscilloscope. `level` (0–1) is how hard someone is talking right now;
+ * `asking` warms the trace to flame while a question is being asked.
+ */
+export function VoiceWave({ level = 0, asking = false }) {
+  const eased = useRef({ lv: 0, hot: 0, last: 0 });
+  const ref = useCanvas((c, { w, h, t, px, py }) => {
+    const st = eased.current;
+    const dt = Math.min(0.05, Math.max(0, t - st.last));
+    st.last = t;
+    st.lv += (level - st.lv) * (1 - Math.exp(-dt / 0.25));
+    st.hot += ((asking ? 1 : 0) - st.hot) * (1 - Math.exp(-dt / 0.3));
+    c.clearRect(0, 0, w, h);
+    const mid = h * 0.5;
+    const [r, g, b] = [233 + 22 * st.hot, 231 - 109 * st.hot, 225 - 179 * st.hot];
+    // Layered traces: a bright lead line and fainter harmonics; never fully flat, a room is never silent
+    for (let k = 0; k < 5; k++) {
+      c.beginPath();
+      for (let x = 0; x <= w; x += 4) {
+        const edge = 0.45 + 0.55 * Math.sin((Math.PI * x) / w) ** 2;
+        const y =
+          Math.sin(x * 0.009 * (1 + k * 0.35) + t * (2.2 + k * 0.6) + k) * 0.6 +
+          Math.sin(x * 0.023 - t * 3.1 + k * 2) * 0.4;
+        const near = Math.exp(-((x - px) ** 2) / 20000 - ((mid - py) ** 2) / 60000);
+        const amp = h * 0.42 * edge * ((0.05 + st.lv * 0.95) * (1 - k * 0.15) + near * 0.3);
+        if (x === 0) c.moveTo(x, mid + y * amp);
+        else c.lineTo(x, mid + y * amp);
+      }
+      c.strokeStyle = `rgb(${r} ${g} ${b} / ${0.6 - k * 0.1})`;
+      c.lineWidth = k === 0 ? 2 : 1;
+      c.stroke();
+    }
+  });
+  return <canvas ref={ref} aria-hidden className={fill} />;
+}
+
+/** Night after the hero's sunset: twinkling stars, the ring as a pale moon, a calm sea that catches it. */
+export function NightSea() {
+  // Seeded, so the sky is the same on every visit
+  const [stars] = useState(() => {
+    let seed = 7;
+    const rand = () => (seed = (seed * 16807) % 2147483647) / 2147483647;
+    return Array.from({ length: 170 }, () => [rand(), rand() ** 1.4, 0.5 + rand() * 1.1, rand() * 6.28]);
+  });
+  const ref = useCanvas((c, { w, h, t, px, py }) => {
+    c.clearRect(0, 0, w, h);
+    const horizon = h * 0.74;
+    const mx = w * 0.8, my = h * 0.2, R = Math.min(w, h) * 0.07;
+
+    for (const [u, v, size, phase] of stars) {
+      const x = u * w, y = v * horizon * 0.95;
+      const near = Math.exp(-((x - px) ** 2 + (y - py) ** 2) / 16000);
+      c.fillStyle = `rgb(246 245 241 / ${0.25 + 0.45 * (0.5 + 0.5 * Math.sin(t * (0.6 + phase / 4) + phase * 9)) + near * 0.5})`;
+      c.beginPath();
+      c.arc(x, y, size + near * 1.5, 0, 6.2832);
+      c.fill();
+    }
+
+    const moonGlow = c.createRadialGradient(mx, my, R * 0.5, mx, my, R * 4);
+    moonGlow.addColorStop(0, "rgb(246 197 144 / 0.16)");
+    moonGlow.addColorStop(1, "rgb(246 197 144 / 0)");
+    c.fillStyle = moonGlow;
+    c.fillRect(mx - R * 4, my - R * 4, R * 8, R * 8);
+    c.beginPath();
+    c.arc(mx, my, R, 0, 6.2832);
+    for (const [lw, a] of [[22, 0.05], [11, 0.1], [5, 0.18]]) {
+      c.lineWidth = lw;
+      c.strokeStyle = `rgb(246 220 190 / ${a})`;
+      c.stroke();
+    }
+    c.lineWidth = 2.5;
+    c.strokeStyle = "#f6e6d2";
+    c.stroke();
+
+    const rows = 14;
+    for (let i = 0; i < rows; i++) {
+      const d = i / (rows - 1);
+      const y0 = horizon + (h - horizon) * d ** 1.4;
+      const next = i === rows - 1 ? h + 10 : horizon + (h - horizon) * ((i + 1) / (rows - 1)) ** 1.4 + 1;
+      c.beginPath();
+      c.moveTo(-10, y0);
+      for (let x = -10; x <= w + 10; x += 8) {
+        const swell = Math.sin(x * 0.011 + t * 0.5 + i * 1.3) * 0.6 + Math.sin(x * 0.029 - t * 0.7 + i) * 0.4;
+        const near = Math.exp(-((x - px) ** 2) / 14000 - ((y0 - py) ** 2) / 4000);
+        c.lineTo(x, y0 - Math.abs(swell) * (1.5 + d * 9) - near * 18);
+      }
+      c.lineTo(w + 10, next);
+      c.lineTo(-10, next);
+      c.closePath();
+      c.fillStyle = "#11120f";
+      c.fill();
+      c.lineWidth = 1;
+      c.strokeStyle = `rgb(233 231 225 / ${0.06 + d * 0.2})`;
+      c.stroke();
+      // The moon's path on the water: a broken streak that shimmers row by row
+      const half = R * (0.9 + d * 2.4) * (0.55 + 0.45 * Math.sin(t * 1.7 + i * 2.1));
+      c.beginPath();
+      c.moveTo(mx - half, y0 - 1);
+      c.lineTo(mx + half, y0 - 1);
+      c.lineWidth = 1.5 + d * 1.5;
+      c.strokeStyle = `rgb(246 230 210 / ${0.55 - d * 0.35})`;
       c.stroke();
     }
   });
