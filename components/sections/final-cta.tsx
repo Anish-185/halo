@@ -16,19 +16,14 @@ export function FinalCta() {
   return (
     <>
       <section id="download" className="px-3 sm:px-4">
-        <div className="frame grain flex min-h-[86svh] flex-col items-center justify-center px-5 py-28 text-center text-white">
+        <div className="frame frame-in grain flex min-h-[86svh] flex-col items-center justify-center px-5 py-28 text-center text-white">
           <div className="absolute inset-0 -z-10">
             <BgVideo name="dusk" />
             <div className="absolute inset-0 bg-[linear-gradient(180deg,rgb(14_10_8/0.1),rgb(14_10_8/0.5))]" />
           </div>
-          <p className="meta relative z-[1] text-white/75">Free for Mac and Windows</p>
-          <h2 aria-label="Bring Halo to your next call." className="display relative z-[1] mt-6 max-w-[14ch]">
-            <Words as="span" text="Bring Halo to" />
-            <br />
-            <Words as="span" delay={0.25} className="accent text-white/80" text="your next call." />
-          </h2>
+          <Words text="Bring Halo to your next call." className="display relative z-[1] max-w-[11ch]" />
           <Reveal delay={0.35} y={14} className="relative z-[1]">
-            <p className="lede mx-auto mt-6 max-w-[30rem] text-white/85">Two-minute setup, and no bot joins your meeting.</p>
+            <p className="lede mx-auto mt-6 max-w-[30rem] text-white/85">Free for Mac and Windows. Two-minute setup, and no bot joins your meeting.</p>
             <div className="mt-9 flex flex-col items-center justify-center gap-2 sm:flex-row">
               <Pill href="#download" arrow>
                 <Icon.apple />
@@ -80,7 +75,7 @@ export function FinalCta() {
           </div>
         </div>
         {/* Giant wordmark, cropped by the page edge */}
-        <p aria-hidden className="pointer-events-none mt-14 select-none text-center text-[34vw] font-semibold leading-[0.72] tracking-[-0.06em] text-white/85 [margin-bottom:-0.12em]">
+        <p aria-hidden className="rise-in pointer-events-none mt-14 select-none text-center text-[34vw] font-semibold leading-[0.72] tracking-[-0.06em] text-white/85 [margin-bottom:-0.12em]">
           Halo
         </p>
       </footer>

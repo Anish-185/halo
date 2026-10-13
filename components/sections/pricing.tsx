@@ -34,9 +34,7 @@ export function Pricing() {
   return (
     <Section id="pricing">
       <Intro
-        label="Pricing"
-        title="Start free."
-        accent="Upgrade when it earns its place."
+        title="Start free. Upgrade when it earns its place."
         body="10 free answers a day. Pro adds unlimited answers, screen context and call notes."
       />
       <div className="mt-14 grid items-stretch gap-3 sm:mt-20 lg:grid-cols-3">

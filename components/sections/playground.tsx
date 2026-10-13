@@ -77,10 +77,10 @@ export function Playground() {
 
   return (
     <section id="try" className="px-3 sm:px-4">
-      <div className="frame grain" style={fields.soleil}>
+      <div className="frame frame-in grain" style={fields.soleil}>
         <div className="relative z-[1] mx-auto grid max-w-[1240px] items-center gap-12 px-5 py-20 sm:px-10 sm:py-28 lg:grid-cols-[1fr_460px] lg:gap-20">
           <div>
-            <Intro label="Try it" title="Ask it" accent="something hard." />
+            <Intro title="Ask it something hard." />
             <p className="lede mt-6 max-w-[28rem] text-ink/75">
               Pick a question someone might throw at you. Halo answers the way it would on a real call.
             </p>

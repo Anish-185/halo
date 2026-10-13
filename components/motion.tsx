@@ -22,7 +22,7 @@ export function Reveal({
   );
 }
 
-/** Headline that settles in word by word. */
+/** Headline whose words slide up out of a mask, one after another. */
 export function Words({
   text,
   className,
@@ -45,16 +45,16 @@ export function Words({
     <M className={className} initial="hide" {...trigger} aria-label={text}>
       {words.map((w, i) => (
         <span key={i} aria-hidden>
-          <motion.span
-            className="inline-block"
-            variants={{
-              hide: { y: "0.5em", opacity: 0, filter: "blur(8px)" },
-              show: { y: 0, opacity: 1, filter: "blur(0px)", transitionEnd: { filter: "none" } },
-            }}
-            transition={{ duration: 1.2, ease: calm, delay: delay + i * 0.06 }}
-          >
-            {w}
-          </motion.span>
+          {/* Padding + negative margin give descenders room inside the mask */}
+          <span className="-mb-[0.12em] inline-block overflow-hidden pb-[0.12em] align-bottom">
+            <motion.span
+              className="inline-block"
+              variants={{ hide: { y: "110%" }, show: { y: 0 } }}
+              transition={{ duration: 1.1, ease: calm, delay: delay + i * 0.05 }}
+            >
+              {w}
+            </motion.span>
+          </span>
           {i < words.length - 1 && " "}
         </span>
       ))}
@@ -62,39 +62,23 @@ export function Words({
   );
 }
 
-/** Section header: mono label, a headline whose second phrase turns to serif italic, optional copy. */
+/** Section header: one big headline, optional copy beside it. */
 export function Intro({
-  label,
   title,
-  accent,
   body,
   light = false,
   center = false,
 }: {
-  label?: string;
   title: string;
-  accent?: string;
   body?: string;
   light?: boolean;
   center?: boolean;
 }) {
-  const soft = light ? "text-white/65" : "text-ink/45";
   return (
-    <div className={center ? "mx-auto max-w-[46rem] text-center" : body ? "grid gap-6 md:grid-cols-[1.25fr_1fr] md:gap-16" : ""}>
-      <div>
-        {label && <p className={`meta ${light ? "text-white/70" : "text-muted"}`}>{label}</p>}
-        <h2 aria-label={accent ? `${title} ${accent}` : title} className={`headline mt-4 ${light ? "text-white" : ""}`}>
-          <Words as="span" text={title} />
-          {accent && (
-            <>
-              {" "}
-              <Words as="span" delay={0.25} className={`accent ${soft}`} text={accent} />
-            </>
-          )}
-        </h2>
-      </div>
+    <div className={center ? "mx-auto max-w-[46rem] text-center" : body ? "grid gap-6 md:grid-cols-[1.4fr_1fr] md:items-end md:gap-16" : ""}>
+      <Words text={title} className={`headline ${light ? "text-white" : ""}`} />
       {body && (
-        <Reveal delay={0.2} y={12} className={center ? "" : "md:pt-10"}>
+        <Reveal delay={0.2} y={12} className={center ? "" : "md:pb-2"}>
           <p className={`lede max-w-[30rem] ${center ? "mx-auto mt-5" : ""} ${light ? "text-white/80" : "text-ink/70"}`}>{body}</p>
         </Reveal>
       )}

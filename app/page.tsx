@@ -1,6 +1,7 @@
 import { Nav } from "@/components/sections/nav";
 import { Hero } from "@/components/sections/hero";
 import { Ticker } from "@/components/sections/ticker";
+import { Statement } from "@/components/sections/statement";
 import { HowItWorks } from "@/components/sections/how-it-works";
 import { LiveDemo } from "@/components/sections/live-demo";
 import { Features } from "@/components/sections/features";
@@ -18,6 +19,7 @@ export default function Home() {
       <main>
         <Hero />
         <Ticker />
+        <Statement />
         <HowItWorks />
         <LiveDemo />
         <Features />

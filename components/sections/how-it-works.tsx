@@ -154,15 +154,13 @@ function Glyphs() {
 export function HowItWorks() {
   return (
     <section id="how" className="px-3 pt-24 sm:px-4 sm:pt-32">
-      <div className="frame grain" style={fields.sky}>
+      <div className="frame frame-in grain" style={fields.sky}>
         <Glyphs />
         <div aria-hidden className="absolute inset-0 z-0 bg-[linear-gradient(180deg,transparent_45%,rgb(12_32_84/0.4))]" />
         <div className="relative z-[1] mx-auto max-w-[1240px] px-5 py-20 sm:px-10 sm:py-28">
           <Intro
             light
-            label="How it works"
-            title="From question to answer"
-            accent="in under a second."
+            title="From question to answer in under a second."
             body="Halo runs next to your call app. No bot joins the meeting, and nothing appears on screen share."
           />
           <ol className="mt-14 grid gap-3 sm:mt-20 md:grid-cols-3">

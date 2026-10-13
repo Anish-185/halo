@@ -202,9 +202,7 @@ export function Features() {
   return (
     <Section id="features">
       <Intro
-        label="Features"
-        title="What Halo knows"
-        accent="while you talk."
+        title="What Halo knows while you talk."
         body="Halo combines what is being said, what is on your screen and what you have uploaded, then answers while the call is still going."
       />
       <div className="mt-14 grid grid-cols-1 gap-3 sm:mt-20 md:grid-cols-6">

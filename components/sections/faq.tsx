@@ -30,10 +30,7 @@ export function Faq() {
     <Section id="faq">
       <div className="grid gap-10 md:grid-cols-[1fr_1.35fr] md:gap-16">
         <div>
-          <p className="meta text-muted">FAQ</p>
-          <h2 aria-label="Questions about Halo." className="headline mt-4">
-            <Words as="span" text="Questions" /> <Words as="span" delay={0.2} className="accent text-ink/45" text="about Halo." />
-          </h2>
+          <Words text="Questions about Halo." className="headline" />
           <p className="mt-6 max-w-[22rem] text-[15px] leading-relaxed text-muted">
             Anything else? Write to support@halo.example and a person will reply within a day.
           </p>

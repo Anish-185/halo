@@ -3,6 +3,7 @@
 import { useEffect } from "react";
 import Lenis from "lenis";
 import { MotionConfig } from "motion/react";
+import { Cursor } from "@/components/cursor";
 
 export function Providers({ children }: { children: React.ReactNode }) {
   useEffect(() => {
@@ -12,5 +13,10 @@ export function Providers({ children }: { children: React.ReactNode }) {
   }, []);
 
   // reducedMotion="user": Motion drops transforms and keeps opacity when the OS asks for less motion.
-  return <MotionConfig reducedMotion="user">{children}</MotionConfig>;
+  return (
+    <MotionConfig reducedMotion="user">
+      {children}
+      <Cursor />
+    </MotionConfig>
+  );
 }

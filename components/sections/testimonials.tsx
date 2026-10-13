@@ -62,12 +62,12 @@ export function Testimonials() {
   const [lead, ...rest] = quotes;
   return (
     <section id="stories" className="px-3 sm:px-4">
-      <div className="frame grain">
+      <div className="frame frame-in grain">
         <Image src="/media/blossom.jpg" alt="" fill sizes="100vw" quality={80} className="-z-10 object-cover object-[60%_40%]" />
         <div className="absolute inset-0 -z-10 bg-[linear-gradient(180deg,rgb(255_244_246/0.55),rgb(255_244_246/0.15)_45%,rgb(255_244_246/0.35))]" />
 
         <div className="relative z-[1] mx-auto max-w-[1240px] px-5 py-20 sm:px-10 sm:py-28">
-          <Intro label="Customers" title="What changes" accent="after the first call." />
+          <Intro title="What changes after the first call." />
 
           <div className="mt-14 grid gap-3 sm:mt-20 lg:grid-cols-[1.35fr_1fr]">
             <Reveal className="h-full">

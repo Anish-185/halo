@@ -1,3 +1,7 @@
+"use client";
+
+import { useState } from "react";
+import { motion, useMotionValueEvent, useScroll } from "motion/react";
 import { Logo, Pill } from "@/components/icons";
 import { Clock } from "@/components/clock";
 
@@ -9,8 +13,21 @@ const links = [
 ];
 
 export function Nav() {
+  // Tuck away while reading down the page, come back the moment you scroll up
+  const { scrollY } = useScroll();
+  const [hidden, setHidden] = useState(false);
+  useMotionValueEvent(scrollY, "change", (y) => {
+    const prev = scrollY.getPrevious() ?? 0;
+    if (Math.abs(y - prev) > 4) setHidden(y > prev && y > 400);
+  });
+
   return (
-    <header className="fixed inset-x-0 top-5 z-50 px-6 sm:top-7 sm:px-10">
+    <motion.header
+      animate={{ y: hidden ? "-160%" : "0%" }}
+      transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+      onFocusCapture={() => setHidden(false)}
+      className="fixed inset-x-0 top-5 z-50 px-6 sm:top-7 sm:px-10"
+    >
       <nav className="smoke mx-auto grid h-14 max-w-[1240px] grid-cols-[1fr_auto_1fr] items-center rounded-full pl-5 pr-1.5 sm:pl-6">
         <ul className="hidden items-center gap-6 text-[14px] text-white/80 md:flex">
           {links.map(([label, href]) => (
@@ -34,6 +51,6 @@ export function Nav() {
           </Pill>
         </div>
       </nav>
-    </header>
+    </motion.header>
   );
 }

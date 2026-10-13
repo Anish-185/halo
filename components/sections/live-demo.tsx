@@ -91,13 +91,7 @@ export function LiveDemo() {
 
           <div className="relative z-[1] mx-auto flex h-full max-w-[1240px] flex-col justify-center px-3 pb-4 pt-20 sm:px-10 sm:pb-8 sm:pt-28">
             <div className="flex items-end justify-between gap-6">
-              <h2
-                aria-label="See it answer a system design interview."
-                className="headline max-w-[18ch] text-[clamp(1.75rem,3.4vw,3rem)]"
-              >
-                <Words as="span" text="See it answer" />{" "}
-                <Words as="span" delay={0.2} className="accent text-white/75" text="a system design interview." />
-              </h2>
+              <Words text="See it answer a system design interview." className="headline max-w-[18ch] text-[clamp(1.75rem,3.6vw,3.5rem)]" />
               <p className="meta hidden items-center gap-2 text-white/75 md:flex">
                 <span className="live-dot h-1.5 w-1.5 rounded-full bg-red-400" />
                 Rec {lines.length ? `00:${String(8 + lines.length * 7).padStart(2, "0")}` : "00:00"} · Northwind Labs
