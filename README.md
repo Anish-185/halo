@@ -2,11 +2,41 @@
 
 A mock landing page for a fictional AI call copilot. Next.js 16, Tailwind CSS 4, Motion, Lenis.
 
+## Open the website
+
+You need [Node.js](https://nodejs.org) 20.9 or newer (it comes with npm) and Git.
+
+1. Get the code. The repository is private, so your GitHub account needs access:
+
+   ```bash
+   git clone https://github.com/Anish-185/halo.git
+   cd halo
+   ```
+
+2. Install the dependencies (once, or after pulling changes that touch `package.json`):
+
+   ```bash
+   npm install
+   ```
+
+3. Start the site:
+
+   ```bash
+   npm run dev
+   ```
+
+4. Open **http://localhost:3000** in your browser. Edits to the code reload the page automatically. Stop the server with `Ctrl+C`.
+
+If port 3000 is already in use, pick another one with `npm run dev -- -p 3100` and open http://localhost:3100 instead.
+
+To run the faster production version (what visitors would get), build it first:
+
 ```bash
-npm install
-npm run dev     # http://localhost:3000
-npm run build && npm start
+npm run build
+npm start         # http://localhost:3000
 ```
+
+The page is best viewed in a desktop browser with a mouse: the backgrounds react to the pointer. It also works on phones, and it respects your system's reduced-motion setting.
 
 ## How the page is put together
 
