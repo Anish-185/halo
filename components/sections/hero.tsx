@@ -36,7 +36,7 @@ export function Hero() {
 
   return (
     <section id="top" ref={ref} className="px-3 pt-3 sm:px-4 sm:pt-4">
-      <div className="frame grain bg-ink pb-[220px] text-white sm:pb-[340px]">
+      <div className="frame grain bg-flame pb-[220px] text-ink sm:pb-[340px]">
         <motion.div style={{ y: bgY }} className="absolute inset-x-0 -top-[4%] -bottom-[16%] -z-10">
           {/* The halo rises over a range of voices: Halo's sunrise, right after the intro iris opens */}
           <Horizon />
@@ -48,16 +48,16 @@ export function Hero() {
             <Words as="span" onView={false} delay={INTRO + 0.15} text="they finish asking." className="block sm:text-right" />
           </h1>
           <motion.div {...rise(INTRO + 0.6)} className="mt-10 grid gap-8 sm:mt-14 md:grid-cols-[1fr_auto] md:items-end">
-            <p className="lede max-w-[27rem] text-white/70">
+            <p className="lede max-w-[27rem] text-ink/80">
               Halo transcribes your call, detects each question, and writes the answer in an overlay only you can see.
               Nothing joins the meeting. Nothing shows on screen share.
             </p>
             <div className="flex flex-wrap gap-2">
-              <Pill href="#download" arrow>
+              <Pill href="#download" arrow tone="dark">
                 <Icon.apple />
                 Download for Mac
               </Pill>
-              <Pill href="#demo" tone="ghost">
+              <Pill href="#demo">
                 Watch a live call
               </Pill>
             </div>

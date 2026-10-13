@@ -143,12 +143,13 @@ export function Ridgelines({ ink = "#11120f", line = "rgb(233 231 225 / 0.5)", h
 
 /**
  * The hero: the halo ring rising like a sun over a range of voice ridgelines, in perspective.
- * It rises once after load; the ridges swell where the pointer is.
+ * A flame sky over ink water with flame ridgelines; it rises once after load, and the ridges
+ * swell where the pointer is.
  */
 export function Horizon({ rows = 22, horizonAt = 0.6, sunX = 0.6 }) {
   const ref = useCanvas((c, { w, h, t, px, py, still }) => {
     const ink = "#11120f";
-    c.fillStyle = ink;
+    c.fillStyle = "#ff7a2e";
     c.fillRect(0, 0, w, h);
 
     const horizon = h * horizonAt;
@@ -158,29 +159,25 @@ export function Horizon({ rows = 22, horizonAt = 0.6, sunX = 0.6 }) {
     const sx = w * sunX;
     const sy = horizon + R * 1.05 - rise * R * 0.95;
 
-    // Sky glow, warmest just above the horizon
+    // A pale bloom of light around the sun on the flame sky
     const glow = c.createRadialGradient(sx, sy, R * 0.4, sx, sy, R * 2.6);
-    glow.addColorStop(0, `rgb(255 122 46 / ${0.1 + rise * 0.28})`);
-    glow.addColorStop(1, "rgb(255 122 46 / 0)");
+    glow.addColorStop(0, `rgb(255 222 190 / ${0.12 + rise * 0.4})`);
+    glow.addColorStop(1, "rgb(255 222 190 / 0)");
     c.fillStyle = glow;
     c.fillRect(sx - R * 2.6, sy - R * 2.6, R * 5.2, R * 5.2);
 
-    // The ring, in the brand gradient, breathing slightly
-    const ring = c.createLinearGradient(sx - R, sy - R, sx + R, sy + R);
-    ring.addColorStop(0, "#f6c590");
-    ring.addColorStop(0.55, "#f0b27a");
-    ring.addColorStop(1, "#5f8aa0");
+    // The ring, a pale sun on the flame sky, breathing slightly
     // Soft light around the ring from a few wide, faint strokes (canvas shadowBlur is far too slow per frame)
     const rr = R + Math.sin(t * 1.1) * 2;
     c.beginPath();
     c.arc(sx, sy, rr, 0, 6.2832);
     for (const [width, a] of [[34, 0.05], [18, 0.09], [9, 0.16]]) {
       c.lineWidth = width;
-      c.strokeStyle = `rgb(255 150 80 / ${a})`;
+      c.strokeStyle = `rgb(255 240 225 / ${a * 1.6})`;
       c.stroke();
     }
-    c.strokeStyle = ring;
-    c.lineWidth = 3;
+    c.strokeStyle = "#f6f5f1";
+    c.lineWidth = 3.5;
     c.stroke();
 
     // Ridges from far to near; each fills below itself so nearer ranges hide farther ones (and the sun)
@@ -207,7 +204,7 @@ export function Horizon({ rows = 22, horizonAt = 0.6, sunX = 0.6 }) {
       c.fillStyle = ink;
       c.fill();
       const hot = Math.abs(y0 - py) < (h - horizon) / rows && px > 0 && px < w;
-      c.strokeStyle = hot ? "#ff7a2e" : `rgb(233 231 225 / ${0.14 + d * 0.5})`;
+      c.strokeStyle = hot ? "#f6f5f1" : `rgb(255 122 46 / ${0.3 + d * 0.6})`;
       c.lineWidth = hot ? 1.5 : 1;
       c.stroke();
     }
