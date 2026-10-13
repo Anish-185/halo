@@ -71,12 +71,6 @@ export const Icon = {
       <path d="M3.5 8.5l3 3 6-7" />
     </svg>
   ),
-  lock: () => (
-    <svg {...icon}>
-      <rect x="3" y="7" width="10" height="7.25" rx="2" />
-      <path d="M5.25 7V5a2.75 2.75 0 0 1 5.5 0v2" />
-    </svg>
-  ),
   doc: () => (
     <svg {...icon}>
       <path d="M4 1.75h5l3.25 3.25v9.25H4zM9 1.75V5h3.25M6 8.5h4M6 11h4" />

@@ -105,13 +105,6 @@ body {
 }
 
 /* ── Materials ── */
-/* Frosted light glass for supporting UI (transcripts, step cards) */
-@utility frost {
-  background: rgb(255 255 255 / 0.22);
-  backdrop-filter: blur(24px) saturate(150%);
-  border: 1px solid rgb(255 255 255 / 0.45);
-  box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.5);
-}
 /* Smoky glass for chrome over scenes (nav, small chips) */
 @utility smoke {
   background: rgb(22 22 20 / 0.7);
@@ -168,11 +161,6 @@ body {
 }
 
 @media (prefers-reduced-transparency: reduce) {
-  .frost {
-    background: rgb(250 250 248 / 0.92);
-    backdrop-filter: none;
-    color: var(--color-ink);
-  }
   .smoke {
     background: rgb(20 20 18 / 0.92);
     backdrop-filter: none;
@@ -272,19 +260,6 @@ summary::-webkit-details-marker {
 }
 .live-dot {
   animation: breathe 2.4s ease-in-out infinite;
-}
-
-/* Transcript glyphs drifting upward through the "How it works" field */
-@keyframes drift {
-  from {
-    transform: translateY(0);
-  }
-  to {
-    transform: translateY(-40px);
-  }
-}
-.glyph {
-  animation: drift 9s ease-in-out infinite alternate;
 }
 
 /* Endless ticker: content is duplicated once, so -50% lands exactly on the copy */
@@ -429,8 +404,7 @@ summary::-webkit-details-marker {
   }
   .caret,
   .ring-glow,
-  .live-dot,
-  .glyph {
+  .live-dot {
     animation: none;
   }
   details::details-content {
