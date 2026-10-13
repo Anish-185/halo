@@ -8,7 +8,7 @@ import { useEffect, useRef } from "react";
  * only animates while on screen, and draws a single still frame when reduced motion is on.
  */
 
-type Frame = { w: number; h: number; t: number; px: number; py: number };
+type Frame = { w: number; h: number; t: number; px: number; py: number; still: boolean };
 
 function useCanvas(draw: (c: CanvasRenderingContext2D, f: Frame) => void) {
   const ref = useRef<HTMLCanvasElement>(null);
@@ -21,7 +21,7 @@ function useCanvas(draw: (c: CanvasRenderingContext2D, f: Frame) => void) {
     const canvas = ref.current!;
     const ctx = canvas.getContext("2d")!;
     const still = matchMedia("(prefers-reduced-motion: reduce)").matches;
-    const f: Frame = { w: 0, h: 0, t: 0, px: -1e4, py: -1e4 };
+    const f: Frame = { w: 0, h: 0, t: 0, px: -1e4, py: -1e4, still };
     // Pointer positions are eased so the field responds like a material, not a mouse trail
     let tx = -1e4, ty = -1e4, raf = 0, visible = false, t0 = performance.now();
 
@@ -110,8 +110,77 @@ export function Ridgelines({ ink = "#11120f", line = "rgb(233 231 225 / 0.5)", h
   return <canvas ref={ref} aria-hidden className={fill} />;
 }
 
+/**
+ * The hero: the halo ring rising like a sun over a range of voice ridgelines, in perspective.
+ * It rises once after load; the ridges swell where the pointer is.
+ */
+export function Horizon({ rows = 22, horizonAt = 0.6, sunX = 0.6 }) {
+  const ref = useCanvas((c, { w, h, t, px, py, still }) => {
+    const ink = "#11120f";
+    c.fillStyle = ink;
+    c.fillRect(0, 0, w, h);
+
+    const horizon = h * horizonAt;
+    const R = Math.min(w * 0.22, h * 0.27);
+    const k = still ? 1 : Math.min(1, Math.max(0, (t - 1.2) / 3.4));
+    const rise = 1 - (1 - k) ** 3;
+    const sx = w * sunX;
+    const sy = horizon + R * 1.05 - rise * R * 0.95;
+
+    // Sky glow, warmest just above the horizon
+    const glow = c.createRadialGradient(sx, sy, R * 0.4, sx, sy, R * 2.6);
+    glow.addColorStop(0, `rgb(255 122 46 / ${0.1 + rise * 0.28})`);
+    glow.addColorStop(1, "rgb(255 122 46 / 0)");
+    c.fillStyle = glow;
+    c.fillRect(0, 0, w, h);
+
+    // The ring, in the brand gradient, breathing slightly
+    const ring = c.createLinearGradient(sx - R, sy - R, sx + R, sy + R);
+    ring.addColorStop(0, "#f6c590");
+    ring.addColorStop(0.55, "#f0b27a");
+    ring.addColorStop(1, "#5f8aa0");
+    c.save();
+    c.shadowColor = "rgb(255 150 80 / 0.9)";
+    c.shadowBlur = 36;
+    c.strokeStyle = ring;
+    c.lineWidth = 3;
+    c.beginPath();
+    c.arc(sx, sy, R + Math.sin(t * 1.1) * 2, 0, 6.2832);
+    c.stroke();
+    c.restore();
+
+    // Ridges from far to near; each fills below itself so nearer ranges hide farther ones (and the sun)
+    for (let i = 0; i < rows; i++) {
+      const d = i / (rows - 1);
+      const y0 = horizon + (h - horizon) * d ** 1.6;
+      c.beginPath();
+      c.moveTo(-10, y0);
+      for (let x = -10; x <= w + 10; x += 6) {
+        const env = 0.25 + Math.exp(-(((x - sx) / w) ** 2) / 0.05); // peaks gather under the sun
+        const voice =
+          Math.sin(x * 0.013 + t * 0.6 + i * 1.9) * 0.55 +
+          Math.sin(x * 0.031 - t * 0.45 + i * 0.7) * 0.3 +
+          Math.sin(x * 0.083 + t * 1.2 + i * 2.3) * 0.15;
+        const near = Math.exp(-((x - px) ** 2) / 12000 - ((y0 - py) ** 2) / 9000);
+        const amp = (10 + d * 95) * env + near * 50;
+        c.lineTo(x, y0 - Math.abs(voice) * amp);
+      }
+      c.lineTo(w + 10, h + 10);
+      c.lineTo(-10, h + 10);
+      c.closePath();
+      c.fillStyle = ink;
+      c.fill();
+      const hot = Math.abs(y0 - py) < (h - horizon) / rows && px > 0 && px < w;
+      c.strokeStyle = hot ? "#ff7a2e" : `rgb(233 231 225 / ${0.14 + d * 0.5})`;
+      c.lineWidth = hot ? 1.5 : 1;
+      c.stroke();
+    }
+  });
+  return <canvas ref={ref} aria-hidden className={fill} />;
+}
+
 /** A dot matrix that listens: dots swell and warm to flame around the pointer, a slow tide runs through. */
-export function DotField({ gap = 22, base = "17 18 15", hot = "255 122 46" }) {
+export function DotField({ gap = 22, base = "17 18 15", hot = "255 122 46", strength = 1 }) {
   const ref = useCanvas((c, { w, h, t, px, py }) => {
     c.clearRect(0, 0, w, h);
     for (let y = gap / 2; y < h; y += gap) {
@@ -120,7 +189,7 @@ export function DotField({ gap = 22, base = "17 18 15", hot = "255 122 46" }) {
         const near = Math.exp(-d2 / 14000);
         const tide = 0.5 + 0.5 * Math.sin(x * 0.012 + y * 0.008 - t * 1.2);
         const r = 1 + tide * 0.7 + near * 5.5;
-        c.fillStyle = near > 0.08 ? `rgb(${hot} / ${0.35 + near * 0.65})` : `rgb(${base} / ${0.2 + tide * 0.14})`;
+        c.fillStyle = near > 0.08 ? `rgb(${hot} / ${0.35 + near * 0.65})` : `rgb(${base} / ${(0.2 + tide * 0.14) * strength})`;
         c.beginPath();
         c.arc(x, y, r, 0, 6.2832);
         c.fill();

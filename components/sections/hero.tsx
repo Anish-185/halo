@@ -2,7 +2,7 @@
 
 import { useRef } from "react";
 import { motion, useScroll, useTransform } from "motion/react";
-import { BgVideo } from "@/components/bg-video";
+import { Horizon } from "@/components/generative";
 import { calm, Words } from "@/components/motion";
 import { Icon, Pill } from "@/components/icons";
 import { Note } from "@/components/flair";
@@ -36,11 +36,10 @@ export function Hero() {
 
   return (
     <section id="top" ref={ref} className="px-3 pt-3 sm:px-4 sm:pt-4">
-      <div className="frame grain pb-[220px] text-ink sm:pb-[340px]">
+      <div className="frame grain bg-ink pb-[220px] text-white sm:pb-[340px]">
         <motion.div style={{ y: bgY }} className="absolute inset-x-0 -top-[4%] -bottom-[16%] -z-10">
-          <BgVideo name="mist" priority />
-          {/* Morning-mist veil: keeps ink type crisp over the bright sky, lets the ridges show below */}
-          <div className="absolute inset-0 bg-[linear-gradient(180deg,rgb(244_245_243/0.82),rgb(244_245_243/0.55)_38%,rgb(244_245_243/0.1)_62%,rgb(10_20_14/0.18))]" />
+          {/* The halo rises over a range of voices: Halo's sunrise, right after the intro iris opens */}
+          <Horizon />
         </motion.div>
 
         <div className="relative z-[1] mx-auto max-w-[1360px] px-5 pt-32 sm:px-10 sm:pt-44">
@@ -49,16 +48,18 @@ export function Hero() {
             <Words as="span" onView={false} delay={INTRO + 0.15} text="they finish asking." className="block sm:text-right" />
           </h1>
           <motion.div {...rise(INTRO + 0.6)} className="mt-10 grid gap-8 sm:mt-14 md:grid-cols-[1fr_auto] md:items-end">
-            <p className="lede max-w-[27rem] text-ink/75">
+            <p className="lede max-w-[27rem] text-white/70">
               Halo transcribes your call, detects each question, and writes the answer in an overlay only you can see.
               Nothing joins the meeting. Nothing shows on screen share.
             </p>
             <div className="flex flex-wrap gap-2">
-              <Pill href="#download" arrow tone="dark">
+              <Pill href="#download" arrow>
                 <Icon.apple />
                 Download for Mac
               </Pill>
-              <Pill href="#demo">Watch a live call</Pill>
+              <Pill href="#demo" tone="ghost">
+                Watch a live call
+              </Pill>
             </div>
           </motion.div>
         </div>
