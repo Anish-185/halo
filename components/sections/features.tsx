@@ -1,7 +1,6 @@
 "use client";
 
 import { Intro, Reveal, Section } from "@/components/motion";
-import { fields } from "@/components/fields";
 import { HaloMark, Icon } from "@/components/halo-ui";
 
 function MiniCall({ withHalo }: { withHalo: boolean }) {
@@ -143,58 +142,63 @@ function Privacy() {
   );
 }
 
+// Flat printed surfaces: ink with a dot screen, paper with a fine grid, flame left plain
+const surfaces = {
+  ink: "bg-ink bg-[radial-gradient(rgb(255_255_255/0.09)_1px,transparent_1.2px)] bg-[size:14px_14px]",
+  paper:
+    "bg-[#f6f5f1] bg-[linear-gradient(rgb(17_18_15/0.05)_1px,transparent_1px),linear-gradient(90deg,rgb(17_18_15/0.05)_1px,transparent_1px)] bg-[size:28px_28px]",
+  flame: "bg-flame",
+};
+
 const features = [
   {
     title: "Invisible on screen share",
     body: "The overlay is excluded from screen sharing and recording at the system level. The other side sees your call, never Halo.",
     Visual: Invisible,
     span: "md:col-span-4",
-    field: fields.meadow,
-    light: true,
+    surface: "ink",
   },
   {
     title: "Live transcript",
     body: "Speaker-labeled transcription for every voice on the call.",
     Visual: Transcript,
     span: "md:col-span-2",
-    field: fields.bloom,
+    surface: "flame",
   },
   {
     title: "Answers in under a second",
     body: "Answers start streaming about 0.8 seconds after the question ends.",
     Visual: Speed,
     span: "md:col-span-2",
-    field: fields.soleil,
+    surface: "paper",
   },
   {
     title: "Sees your screen too",
     body: "Reads the code, slides or docs on your screen and answers about them.",
     Visual: Screen,
     span: "md:col-span-2",
-    field: fields.signal,
+    surface: "ink",
   },
   {
     title: "Knows your material",
     body: "Upload a resume, price sheet or notes. Answers use your facts and numbers.",
     Visual: Material,
     span: "md:col-span-2",
-    field: fields.sky,
-    light: true,
+    surface: "paper",
   },
   {
     title: "Notes after every call",
     body: "Summary, decisions and action items, sent the moment the call ends.",
     Visual: Notes,
     span: "md:col-span-3",
-    field: fields.bloom,
+    surface: "paper",
   },
   {
     title: "Private by default",
     body: "Audio is processed in real time and never stored. Your calls are never used to train models.",
     Visual: Privacy,
     span: "md:col-span-3",
-    field: fields.meadow,
-    light: true,
+    surface: "ink",
   },
 ];
 
@@ -206,8 +210,10 @@ export function Features() {
         body="Halo combines what is being said, what is on your screen and what you have uploaded, then answers while the call is still going."
       />
       <div className="mt-14 grid grid-cols-1 gap-3 sm:mt-20 md:grid-cols-6">
-        {features.map(({ title, body, Visual, span, field, light }, i) => (
-          <Reveal key={title} delay={(i % 3) * 0.1} className={`frame grain flex min-h-[25rem] flex-col ${span}`} style={field}>
+        {features.map(({ title, body, Visual, span, surface }, i) => {
+          const light = surface === "ink";
+          return (
+          <Reveal key={title} delay={(i % 3) * 0.1} className={`frame grain flex min-h-[25rem] flex-col ${surfaces[surface as keyof typeof surfaces]} ${span}`}>
             <div className={`relative z-[1] p-6 sm:p-8 ${light ? "text-white" : "text-ink"}`}>
               <h3 className="title">{title}</h3>
               <p className={`mt-2 max-w-[30rem] text-[15px] leading-relaxed ${light ? "text-white/75" : "text-ink/70"}`}>{body}</p>
@@ -219,7 +225,8 @@ export function Features() {
               </div>
             </div>
           </Reveal>
-        ))}
+          );
+        })}
       </div>
     </Section>
   );

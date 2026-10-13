@@ -1,5 +1,5 @@
 import Image from "next/image";
-import { BgVideo } from "@/components/bg-video";
+import { Ridgelines } from "@/components/generative";
 import { Reveal, Words } from "@/components/motion";
 import { Icon, Logo, Pill } from "@/components/icons";
 
@@ -16,20 +16,17 @@ export function FinalCta() {
   return (
     <>
       <section id="download" className="px-3 sm:px-4">
-        <div className="frame frame-in grain flex min-h-[86svh] flex-col items-center justify-center px-5 py-28 text-center text-white">
-          <div className="absolute inset-0 -z-10">
-            <BgVideo name="dusk" />
-            <div className="absolute inset-0 bg-[linear-gradient(180deg,rgb(14_10_8/0.1),rgb(14_10_8/0.5))]" />
-          </div>
+        <div className="frame frame-in grain flex min-h-[86svh] flex-col items-center justify-center bg-flame px-5 py-28 text-center text-ink">
+          <Ridgelines ink="#ff7a2e" line="rgb(17 18 15 / 0.28)" hot="#f6f5f1" rows={26} />
           <Words text="Bring Halo to your next call." className="display relative z-[1] max-w-[11ch]" />
           <Reveal delay={0.35} y={14} className="relative z-[1]">
-            <p className="lede mx-auto mt-6 max-w-[30rem] text-white/85">Free for Mac and Windows. Two-minute setup, and no bot joins your meeting.</p>
+            <p className="lede mx-auto mt-6 max-w-[30rem] text-ink/80">Free for Mac and Windows. Two-minute setup, and no bot joins your meeting.</p>
             <div className="mt-9 flex flex-col items-center justify-center gap-2 sm:flex-row">
-              <Pill href="#download" arrow>
+              <Pill href="#download" arrow tone="dark">
                 <Icon.apple />
                 Download for Mac
               </Pill>
-              <Pill href="#download" tone="ghost">
+              <Pill href="#download">
                 Download for Windows
               </Pill>
             </div>

@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { useInView, useReducedMotion } from "motion/react";
-import { fields } from "@/components/fields";
+import { DotField } from "@/components/generative";
 import { Intro } from "@/components/motion";
 import { Answer, Asked, HaloPanel, Tiles } from "@/components/halo-ui";
 import { Note } from "@/components/flair";
@@ -77,7 +77,8 @@ export function Playground() {
 
   return (
     <section id="try" className="px-3 sm:px-4">
-      <div className="frame frame-in grain" style={fields.soleil}>
+      <div className="frame frame-in bg-[#f6f5f1]">
+        <DotField />
         <div className="relative z-[1] mx-auto grid max-w-[1240px] items-center gap-12 px-5 py-20 sm:px-10 sm:py-28 lg:grid-cols-[1fr_460px] lg:gap-20">
           <div>
             <Intro title="Ask it something hard." />
@@ -93,7 +94,7 @@ export function Playground() {
                   onPointerDown={() => setI(n)}
                   onClick={() => setI(n)}
                   className={`btn h-11 px-4 text-[14.5px] ${
-                    n === i ? "bg-ink text-white" : "bg-white/55 text-ink backdrop-blur-xl hover:bg-white/80"
+                    n === i ? "bg-ink text-white" : "border border-ink/10 bg-white/70 text-ink backdrop-blur-xl hover:bg-white"
                   }`}
                 >
                   {x.chip}

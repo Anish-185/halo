@@ -1,6 +1,5 @@
 import { Intro, Reveal, Section } from "@/components/motion";
 import { Icon, Pill } from "@/components/icons";
-import { fields } from "@/components/fields";
 
 const tiers = [
   {
@@ -41,7 +40,7 @@ export function Pricing() {
         {tiers.map((t, i) => (
           <Reveal key={t.name} delay={i * 0.12} className="h-full">
             {t.featured ? (
-              <div className="frame grain h-full p-2" style={fields.soleil}>
+              <div className="frame grain h-full bg-flame p-2">
                 <Tier t={t} />
               </div>
             ) : (

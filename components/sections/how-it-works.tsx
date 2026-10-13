@@ -1,7 +1,7 @@
 "use client";
 
 import { Intro, Reveal } from "@/components/motion";
-import { fields } from "@/components/fields";
+import { Ridgelines } from "@/components/generative";
 import { HaloMark, HiddenBadge, Icon } from "@/components/halo-ui";
 
 function ReadyVisual() {
@@ -111,52 +111,11 @@ const steps = [
   },
 ];
 
-// Fragments of a transcript, scattered in columns like words caught mid-air
-const words = [
-  "how",
-  "would",
-  "you",
-  "design",
-  "a",
-  "rate",
-  "limiter",
-  "per",
-  "key",
-  "redis",
-  "429",
-  "retry",
-  "after",
-  "burst",
-];
-const columns = Array.from({ length: 11 }, (_, i) => {
-  const w = words[(i * 5) % words.length] + " " + words[(i * 3 + 2) % words.length];
-  return { text: w.split(""), left: (i * 37 + 7) % 96, top: 42 + ((i * 53 + 11) % 50), delay: (i % 5) * -1.7 };
-});
-
-function Glyphs() {
-  return (
-    <div aria-hidden className="pointer-events-none absolute inset-0 z-0">
-      {columns.map((c, i) => (
-        <div
-          key={i}
-          className="glyph meta absolute flex flex-col items-center leading-[1.35] text-white/30"
-          style={{ left: `${c.left}%`, top: `${c.top}%`, animationDelay: `${c.delay}s` }}
-        >
-          {c.text.map((ch, j) => (
-            <span key={j}>{ch === " " ? "\u00a0" : ch}</span>
-          ))}
-        </div>
-      ))}
-    </div>
-  );
-}
-
 export function HowItWorks() {
   return (
     <section id="how" className="px-3 pt-24 sm:px-4 sm:pt-32">
-      <div className="frame frame-in grain" style={fields.sky}>
-        <Glyphs />
-        <div aria-hidden className="absolute inset-0 z-0 bg-[linear-gradient(180deg,transparent_45%,rgb(12_32_84/0.4))]" />
+      <div className="frame frame-in grain bg-ink">
+        <Ridgelines />
         <div className="relative z-[1] mx-auto max-w-[1240px] px-5 py-20 sm:px-10 sm:py-28">
           <Intro
             light
@@ -167,12 +126,12 @@ export function HowItWorks() {
             {steps.map(({ title, body, Visual }, i) => (
               <li key={title}>
                 <Reveal delay={i * 0.12} className="h-full">
-                  <div className="frost flex h-full flex-col rounded-[26px] p-2.5">
+                  <div className="flex h-full flex-col rounded-[26px] border border-white/10 bg-ink/60 p-2.5 backdrop-blur-xl">
                     <div className="device edge-light flex min-h-[16rem] flex-col rounded-[18px] p-4">
                       <Visual />
                     </div>
                     <div className="px-3.5 pb-4 pt-6 text-white">
-                      <span className="meta text-white/70">0{i + 1}</span>
+                      <span className="meta text-flame">0{i + 1}</span>
                       <h3 className="title mt-2">{title}</h3>
                       <p className="mt-2 text-[15px] leading-relaxed text-white/80">{body}</p>
                     </div>

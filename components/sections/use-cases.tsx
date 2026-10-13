@@ -3,7 +3,6 @@
 import { useRef } from "react";
 import { motion, useScroll, useTransform } from "motion/react";
 import { Intro } from "@/components/motion";
-import { fields } from "@/components/fields";
 import { Answer, Asked, HaloPanel } from "@/components/halo-ui";
 
 const cases = [
@@ -69,6 +68,22 @@ const cases = [
  * A day in one scroll: on large screens the section pins and the cards slide sideways from
  * morning to night. Smaller screens keep a native swipeable row.
  */
+/*
+ * Flat posters of the day: one sun crossing the sky. It rises low on the left, stands high at
+ * noon, sinks on the right in the evening and turns to a pale moon at night.
+ */
+const skies = {
+  morning: { bg: "bg-[#f6f5f1]", text: "text-ink", soft: "text-ink/65", disc: "bg-flame left-[-18%] top-[34%] w-[78%]" },
+  afternoon: { bg: "bg-flame", text: "text-ink", soft: "text-ink/70", disc: "bg-[#f6f5f1] left-[30%] top-[-14%] w-[58%]" },
+  evening: { bg: "bg-[#b8401a]", text: "text-white", soft: "text-white/75", disc: "bg-flame right-[-22%] top-[30%] w-[82%]" },
+  night: {
+    bg: "bg-ink",
+    text: "text-white",
+    soft: "text-white/65",
+    disc: "bg-[#e9e7e1] right-[10%] top-[8%] w-[22%] shadow-[inset_-14px_6px_0_0_#11120f]",
+  },
+};
+
 export function UseCases() {
   const ref = useRef<HTMLElement>(null);
   const { scrollYProgress } = useScroll({ target: ref, offset: ["start start", "end end"] });
@@ -88,18 +103,20 @@ export function UseCases() {
               Interviews in the morning, a sales call after lunch, the team sync, the evening lecture. Halo adapts its answers to each.
             </p>
           </div>
-          {cases.map((c) => (
+          {cases.map((c) => {
+            const sky = skies[c.sky as keyof typeof skies];
+            return (
             <article
               key={c.name}
-              className="frame grain flex min-h-[36rem] w-[84vw] shrink-0 snap-center flex-col p-4 text-white sm:w-[60vw] lg:h-[78svh] lg:max-h-[46rem] lg:w-[26vw] lg:min-w-[22rem]"
-              style={fields[c.sky as keyof typeof fields]}
+              className={`frame grain flex min-h-[36rem] w-[84vw] shrink-0 snap-center flex-col p-4 sm:w-[60vw] lg:h-[78svh] lg:max-h-[46rem] lg:w-[26vw] lg:min-w-[22rem] ${sky.bg} ${sky.text}`}
             >
-              <div className="relative z-[1] flex items-center justify-between px-2 pt-1 text-white/80">
+              <span aria-hidden className={`absolute aspect-square rounded-full ${sky.disc}`} />
+              <div className={`relative z-[1] flex items-center justify-between px-2 pt-1 ${sky.soft}`}>
                 <span className="meta tabular-nums">{c.time}</span>
                 <span className="meta">{c.app}</span>
               </div>
               <h3 className="relative z-[1] mt-8 px-2 text-[clamp(2.5rem,4vw,3.75rem)] font-[450] leading-[0.95] tracking-[-0.05em]">{c.name}</h3>
-              <p className="relative z-[1] mt-3 max-w-[26ch] px-2 text-[15px] leading-relaxed text-white/80">{c.blurb}</p>
+              <p className={`relative z-[1] mt-3 max-w-[26ch] px-2 text-[15px] leading-relaxed ${sky.soft}`}>{c.blurb}</p>
               <div className="relative z-[1] mt-auto pt-8">
                 <HaloPanel status="Answering">
                   <Asked q={c.q} />
@@ -107,7 +124,8 @@ export function UseCases() {
                 </HaloPanel>
               </div>
             </article>
-          ))}
+            );
+          })}
         </motion.div>
         <div className="mx-auto mt-8 hidden h-[3px] w-40 overflow-hidden rounded-full bg-ink/10 lg:block">
           <motion.div style={{ scaleX: scrollYProgress }} className="h-full origin-left rounded-full bg-ink" />

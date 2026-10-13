@@ -3,7 +3,7 @@
 import { useRef, useState } from "react";
 import { AnimatePresence, motion, useMotionValueEvent, useScroll } from "motion/react";
 import { calm, Words } from "@/components/motion";
-import Image from "next/image";
+import { HaloShader } from "@/components/generative";
 import { Answer, Asked, HaloPanel, HiddenBadge } from "@/components/halo-ui";
 
 /* `at` values are positions (0–1) through the pinned scroll distance. */
@@ -81,13 +81,13 @@ export function LiveDemo() {
   const lines = transcript.filter((l) => p >= l.at);
   const current = [...answers].reverse().find((a) => p >= a.from);
   const shown = current ? Math.round(Math.min(1, (p - current.from) / (current.to - current.from)) * len(current)) : 0;
+  const answering = !!current && shown < len(current);
 
   return (
     <section id="demo" ref={ref} className="relative mt-24 h-[360vh] px-3 sm:mt-32 sm:px-4">
       <div className="sticky top-3 h-[calc(100svh-24px)] sm:top-4 sm:h-[calc(100svh-32px)]">
-        <div className="frame grain h-full text-white">
-          <Image src="/media/meadow.jpg" alt="" fill sizes="100vw" quality={80} className="-z-10 object-cover" />
-          <div className="absolute inset-0 -z-10 bg-[linear-gradient(180deg,rgb(10_12_8/0.55),rgb(10_12_8/0.35)_40%,rgb(10_12_8/0.5))]" />
+        <div className="frame grain h-full bg-ink text-white">
+          <HaloShader energy={answering ? 1 : 0} center={[0.3, -0.04]} radius={0.4} />
 
           <div className="relative z-[1] mx-auto flex h-full max-w-[1240px] flex-col justify-center px-3 pb-4 pt-20 sm:px-10 sm:pb-8 sm:pt-28">
             <div className="flex items-end justify-between gap-6">
@@ -99,8 +99,8 @@ export function LiveDemo() {
             </div>
 
             <div className="mt-5 grid min-h-0 gap-2 sm:mt-8 sm:gap-4 lg:grid-cols-[1fr_440px]">
-              {/* Transcript: frosted and secondary, so the Halo panel is the richest object in the frame */}
-              <div className="frost flex h-[17svh] flex-col rounded-[22px] p-4 sm:h-[36svh] sm:p-6 lg:h-[440px]">
+              {/* Transcript: quiet smoked glass, so the Halo panel stays the richest object in the frame */}
+              <div className="flex h-[17svh] border border-white/10 bg-white/[0.04] backdrop-blur-md flex-col rounded-[22px] p-4 sm:h-[36svh] sm:p-6 lg:h-[440px]">
                 <p className="meta text-white/70">Live transcript</p>
                 <div className="relative mt-4 flex flex-1 flex-col justify-end gap-3 overflow-hidden [mask-image:linear-gradient(transparent,black_30%)] sm:gap-4">
                   <AnimatePresence initial={false}>
@@ -124,7 +124,7 @@ export function LiveDemo() {
                 </div>
               </div>
 
-              <HaloPanel status={current && shown < len(current) ? "Answering" : "Listening"} className="lg:h-[440px]">
+              <HaloPanel status={answering ? "Answering" : "Listening"} className="lg:h-[440px]">
                 <div className="relative min-h-[15.5rem] flex-1 sm:min-h-[17rem]">
                   <AnimatePresence mode="wait" initial={false}>
                     {current ? (
