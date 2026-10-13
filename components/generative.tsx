@@ -8,6 +8,23 @@ import { useEffect, useRef } from "react";
  * only animates while on screen, and draws a single still frame when reduced motion is on.
  */
 
+/**
+ * Watches frame intervals and reports true once frames have run long (under ~45 fps) for a
+ * sustained stretch. Raster cost lands after our draw calls, so the interval is the honest signal.
+ */
+function slowFrames() {
+  let score = 0;
+  return (dt: number) => {
+    score = Math.max(0, score + (dt > 22 ? 1 : -1));
+    if (score < 12) return false;
+    score = 0;
+    return true;
+  };
+}
+
+/** How long the fields take to follow the pointer (time constant). Lower is snappier. */
+const EASE_MS = 60;
+
 type Frame = { w: number; h: number; t: number; px: number; py: number; still: boolean };
 
 function useCanvas(draw: (c: CanvasRenderingContext2D, f: Frame) => void) {
@@ -22,12 +39,15 @@ function useCanvas(draw: (c: CanvasRenderingContext2D, f: Frame) => void) {
     const ctx = canvas.getContext("2d")!;
     const still = matchMedia("(prefers-reduced-motion: reduce)").matches;
     const f: Frame = { w: 0, h: 0, t: 0, px: -1e4, py: -1e4, still };
-    // Pointer positions are eased so the field responds like a material, not a mouse trail
-    let tx = -1e4, ty = -1e4, raf = 0, visible = false, t0 = performance.now();
+    // The pointer is kept in viewport coordinates and mapped onto the canvas each frame, so the field
+    // still lands under the cursor after a scroll without mouse movement
+    let cx = -1e4, cy = -1e4, raf = 0, visible = false, t0 = performance.now(), last = t0;
 
+    // Start sharp; if this device can't keep up (often a software-rendered canvas), drop to 1x for good
+    let dpr = Math.min(devicePixelRatio, 2);
+    const isSlow = slowFrames();
     const size = () => {
       const r = canvas.getBoundingClientRect();
-      const dpr = Math.min(devicePixelRatio, 2);
       f.w = r.width;
       f.h = r.height;
       canvas.width = r.width * dpr;
@@ -37,23 +57,32 @@ function useCanvas(draw: (c: CanvasRenderingContext2D, f: Frame) => void) {
     };
     const tick = (now: number) => {
       f.t = (now - t0) / 1000;
-      f.px += (tx - f.px) * 0.08;
-      f.py += (ty - f.py) * 0.08;
+      const r = canvas.getBoundingClientRect();
+      const tx = cx - r.left, ty = cy - r.top;
+      // Ease toward the pointer with a fixed 60 ms time constant: soft, but caught up in ~0.2 s at any frame rate
+      const dt = now - last;
+      const k = f.px < -1e3 ? 1 : 1 - Math.exp(-dt / EASE_MS);
+      last = now;
+      f.px += (tx - f.px) * k;
+      f.py += (ty - f.py) * k;
       drawRef.current(ctx, f);
+      if (dpr > 1 && isSlow(dt)) {
+        dpr = 1;
+        size();
+      }
       if (visible) raf = requestAnimationFrame(tick);
     };
     const move = (e: PointerEvent) => {
-      const r = canvas.getBoundingClientRect();
-      tx = e.clientX - r.left;
-      ty = e.clientY - r.top;
-      if (f.px < -1e3) [f.px, f.py] = [tx, ty];
+      cx = e.clientX;
+      cy = e.clientY;
     };
     const ro = new ResizeObserver(size);
     const io = new IntersectionObserver(([e]) => {
       visible = e.isIntersecting && !still;
       cancelAnimationFrame(raf);
       if (visible) {
-        t0 = performance.now() - f.t * 1000;
+        last = performance.now();
+        t0 = last - f.t * 1000;
         raf = requestAnimationFrame(tick);
       }
     });
@@ -96,9 +125,11 @@ export function Ridgelines({ ink = "#11120f", line = "rgb(233 231 225 / 0.5)", h
         const amp = gap * (0.6 + env * 3.2 + near * 4) * (0.6 + 0.4 * Math.sin(t * 0.7 + i));
         c.lineTo(x, y0 - Math.abs(voice) * amp);
       }
-      // Fill below each line so nearer ridges hide the ones behind
-      c.lineTo(w, y0 + gap * 6);
-      c.lineTo(0, y0 + gap * 6);
+      // Fill down to the next row's baseline: that ridge's own fill hides everything below it,
+      // so the rows tile the area without each one repainting to the bottom
+      const below = i === rows - 1 ? h : y0 + gap + 1;
+      c.lineTo(w, below);
+      c.lineTo(0, below);
       c.closePath();
       c.fillStyle = ink;
       c.fill();
@@ -132,27 +163,31 @@ export function Horizon({ rows = 22, horizonAt = 0.6, sunX = 0.6 }) {
     glow.addColorStop(0, `rgb(255 122 46 / ${0.1 + rise * 0.28})`);
     glow.addColorStop(1, "rgb(255 122 46 / 0)");
     c.fillStyle = glow;
-    c.fillRect(0, 0, w, h);
+    c.fillRect(sx - R * 2.6, sy - R * 2.6, R * 5.2, R * 5.2);
 
     // The ring, in the brand gradient, breathing slightly
     const ring = c.createLinearGradient(sx - R, sy - R, sx + R, sy + R);
     ring.addColorStop(0, "#f6c590");
     ring.addColorStop(0.55, "#f0b27a");
     ring.addColorStop(1, "#5f8aa0");
-    c.save();
-    c.shadowColor = "rgb(255 150 80 / 0.9)";
-    c.shadowBlur = 36;
+    // Soft light around the ring from a few wide, faint strokes (canvas shadowBlur is far too slow per frame)
+    const rr = R + Math.sin(t * 1.1) * 2;
+    c.beginPath();
+    c.arc(sx, sy, rr, 0, 6.2832);
+    for (const [width, a] of [[34, 0.05], [18, 0.09], [9, 0.16]]) {
+      c.lineWidth = width;
+      c.strokeStyle = `rgb(255 150 80 / ${a})`;
+      c.stroke();
+    }
     c.strokeStyle = ring;
     c.lineWidth = 3;
-    c.beginPath();
-    c.arc(sx, sy, R + Math.sin(t * 1.1) * 2, 0, 6.2832);
     c.stroke();
-    c.restore();
 
     // Ridges from far to near; each fills below itself so nearer ranges hide farther ones (and the sun)
     for (let i = 0; i < rows; i++) {
       const d = i / (rows - 1);
       const y0 = horizon + (h - horizon) * d ** 1.6;
+      const next = i === rows - 1 ? h + 10 : horizon + (h - horizon) * ((i + 1) / (rows - 1)) ** 1.6 + 1;
       c.beginPath();
       c.moveTo(-10, y0);
       for (let x = -10; x <= w + 10; x += 6) {
@@ -165,8 +200,9 @@ export function Horizon({ rows = 22, horizonAt = 0.6, sunX = 0.6 }) {
         const amp = (10 + d * 95) * env + near * 50;
         c.lineTo(x, y0 - Math.abs(voice) * amp);
       }
-      c.lineTo(w + 10, h + 10);
-      c.lineTo(-10, h + 10);
+      // Tile down to the next row; its own fill takes over from there
+      c.lineTo(w + 10, next);
+      c.lineTo(-10, next);
       c.closePath();
       c.fillStyle = ink;
       c.fill();
@@ -183,21 +219,36 @@ export function Horizon({ rows = 22, horizonAt = 0.6, sunX = 0.6 }) {
 export function DotField({ gap = 22, base = "17 18 15", hot = "255 122 46", strength = 1 }) {
   const ref = useCanvas((c, { w, h, t, px, py }) => {
     c.clearRect(0, 0, w, h);
+    // Quiet dots are grouped into a few alpha bands so each band is one fill, not thousands
+    const bands = Array.from({ length: BANDS }, () => new Path2D());
+    const hotDots: [number, number, number, number][] = [];
     for (let y = gap / 2; y < h; y += gap) {
       for (let x = gap / 2; x < w; x += gap) {
-        const d2 = (x - px) ** 2 + (y - py) ** 2;
-        const near = Math.exp(-d2 / 14000);
+        const near = Math.exp(-((x - px) ** 2 + (y - py) ** 2) / 14000);
         const tide = 0.5 + 0.5 * Math.sin(x * 0.012 + y * 0.008 - t * 1.2);
         const r = 1 + tide * 0.7 + near * 5.5;
-        c.fillStyle = near > 0.08 ? `rgb(${hot} / ${0.35 + near * 0.65})` : `rgb(${base} / ${(0.2 + tide * 0.14) * strength})`;
-        c.beginPath();
-        c.arc(x, y, r, 0, 6.2832);
-        c.fill();
+        if (near > 0.08) hotDots.push([x, y, r, near]);
+        else {
+          const band = bands[Math.min(BANDS - 1, Math.floor(tide * BANDS))];
+          band.moveTo(x + r, y);
+          band.arc(x, y, r, 0, 6.2832);
+        }
       }
+    }
+    bands.forEach((p, i) => {
+      c.fillStyle = `rgb(${base} / ${(0.2 + ((i + 0.5) / BANDS) * 0.14) * strength})`;
+      c.fill(p);
+    });
+    for (const [x, y, r, near] of hotDots) {
+      c.fillStyle = `rgb(${hot} / ${0.35 + near * 0.65})`;
+      c.beginPath();
+      c.arc(x, y, r, 0, 6.2832);
+      c.fill();
     }
   });
   return <canvas ref={ref} aria-hidden className={fill} />;
 }
+const BANDS = 6;
 
 const frag = `
 precision highp float;
@@ -257,8 +308,9 @@ export function HaloShader({ energy = 0, center = [0, 0], radius = 0.36 }: { ene
       gl.uniform1f(u("energy"), e);
       gl.drawArrays(gl.TRIANGLES, 0, 3);
     };
+    let dpr = Math.min(devicePixelRatio, 1.5);
+    const isSlow = slowFrames();
     const size = () => {
-      const dpr = Math.min(devicePixelRatio, 1.5);
       canvas.width = canvas.clientWidth * dpr;
       canvas.height = canvas.clientHeight * dpr;
       gl.viewport(0, 0, canvas.width, canvas.height);
@@ -270,10 +322,15 @@ export function HaloShader({ energy = 0, center = [0, 0], radius = 0.36 }: { ene
       render();
     };
     const tick = (now: number) => {
-      t += Math.min(0.05, (now - last) / 1000);
+      const dt = now - last;
+      t += Math.min(0.05, dt / 1000);
       last = now;
-      e += (target.current - e) * 0.04;
+      e += (target.current - e) * (1 - Math.exp(-dt / 400));
       render();
+      if (dpr > 0.66 && isSlow(dt)) {
+        dpr = dpr > 1 ? 1 : 0.66;
+        size();
+      }
       if (visible) raf = requestAnimationFrame(tick);
     };
     const ro = new ResizeObserver(size);
