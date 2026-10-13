@@ -36,7 +36,10 @@ export function Cursor() {
       el.style.transform = `translate3d(${cx}px, ${cy}px, 0)`;
       raf = requestAnimationFrame(loop);
     };
-    const hide = () => (el.style.opacity = "0");
+    const hide = () => {
+      el.style.opacity = "0";
+      release();
+    };
     const show = () => (el.style.opacity = "1");
     addEventListener("pointermove", move);
     document.documentElement.addEventListener("pointerleave", hide);

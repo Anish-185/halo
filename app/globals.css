@@ -105,13 +105,6 @@ body {
 }
 
 /* ── Materials ── */
-/* Frosted light glass for supporting UI (transcripts, step cards) */
-@utility frost {
-  background: rgb(255 255 255 / 0.22);
-  backdrop-filter: blur(24px) saturate(150%);
-  border: 1px solid rgb(255 255 255 / 0.45);
-  box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.5);
-}
 /* Smoky glass for chrome over scenes (nav, small chips) */
 @utility smoke {
   background: rgb(22 22 20 / 0.7);
@@ -168,11 +161,6 @@ body {
 }
 
 @media (prefers-reduced-transparency: reduce) {
-  .frost {
-    background: rgb(250 250 248 / 0.92);
-    backdrop-filter: none;
-    color: var(--color-ink);
-  }
   .smoke {
     background: rgb(20 20 18 / 0.92);
     backdrop-filter: none;
@@ -274,19 +262,6 @@ summary::-webkit-details-marker {
   animation: breathe 2.4s ease-in-out infinite;
 }
 
-/* Transcript glyphs drifting upward through the "How it works" field */
-@keyframes drift {
-  from {
-    transform: translateY(0);
-  }
-  to {
-    transform: translateY(-40px);
-  }
-}
-.glyph {
-  animation: drift 9s ease-in-out infinite alternate;
-}
-
 /* Endless ticker: content is duplicated once, so -50% lands exactly on the copy */
 @keyframes marquee {
   to {
@@ -365,11 +340,23 @@ summary::-webkit-details-marker {
       transform: translateY(45%);
     }
   }
+  /* Finishes as it fully enters, so it completes even at the very bottom of the page */
   .rise-in {
     animation: rise-in linear both;
     animation-timeline: view();
-    animation-range: entry 0% cover 45%;
+    animation-range: entry 0% entry 100%;
   }
+}
+
+/* The footer wordmark's ring glows like a live light */
+@keyframes ring-glow {
+  50% {
+    filter: drop-shadow(0 0 0.05em rgb(255 122 46 / 0.9)) drop-shadow(0 0 0.14em rgb(255 122 46 / 0.4));
+  }
+}
+.ring-glow {
+  filter: drop-shadow(0 0 0.03em rgb(255 122 46 / 0.6)) drop-shadow(0 0 0.08em rgb(255 122 46 / 0.2));
+  animation: ring-glow 4s ease-in-out infinite;
 }
 
 /* Halo cursor: a ring that trails the pointer, only for fine pointers */
@@ -416,8 +403,8 @@ summary::-webkit-details-marker {
     stroke-dashoffset: 0;
   }
   .caret,
-  .live-dot,
-  .glyph {
+  .ring-glow,
+  .live-dot {
     animation: none;
   }
   details::details-content {
